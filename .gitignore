@@ -1,0 +1,67 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Binary and build artifacts
+/bin
+/dist
+/build
+/*.exe
+/*.exe~
+/*.dll
+/*.so
+/*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+*.cov
+*.cover
+*.html
+
+# Dependency directories
+/vendor
+/node_modules
+
+# Go workspace file
+go.work
+go.work.sum
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Temp files
+tmp/
+temp/
+*.tmp
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Build artifacts
+/main
+/cmd/app/app
