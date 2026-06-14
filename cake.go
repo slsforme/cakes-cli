@@ -1,12 +1,12 @@
 package main
 
-type Form int
+type Form string
 
 const (
-	Round Form = iota
-	Square
-	HeartShaped
-	Rectangular
+	Round       Form = "Круглый"
+	Square      Form = "Квадратный"
+	HeartShaped Form = "Сердце"
+	Rectangular Form = "Прямоугольный"
 )
 
 type Compound struct {
@@ -119,4 +119,8 @@ var AvailableDecor = []Compound{
 	{Name: "Свечи", Price: 30},
 	{Name: "Ленты", Price: 70},
 	{Name: "Фигурки", Price: 150},
+}
+
+func AllForms() []Form {
+	return []Form{Round, Square, HeartShaped, Rectangular}
 }

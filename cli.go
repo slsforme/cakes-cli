@@ -8,118 +8,63 @@ import (
 	"github.com/eiannone/keyboard"
 )
 
-var ArrowStarterCursor = 6
-
 func clearScreen() {
 	fmt.Print("\033[2J\033[H")
 }
 
-func moveArrowDown(cursor, max int) int {
-	if cursor > ArrowStarterCursor+max {
-		return cursor
-	}
-
-	moveTo(cursor, 1)
-	fmt.Printf("  ")
-
-	cursor++
-	moveTo(cursor, 1)
-	fmt.Print("->")
-	return cursor
-}
-
-func moveArrowUp(cursor int) int {
-	if cursor < ArrowStarterCursor {
-		return cursor
-	}
-
-	moveTo(cursor, 1)
-	fmt.Printf("  ")
-	cursor--
-	moveTo(cursor, 1)
-	fmt.Printf("->")
-	return cursor
-}
-
 func printBox(title string) {
 	width := utf8.RuneCountInString(title)
+	border := strings.Repeat("=", width+4)
 
-	top := "╔" + strings.Repeat("=", width+5) + "╗"
-	mid := "║  " + title + "  ║"
-	low := "╚" + strings.Repeat("=", width+5) + "╝"
-
-	fmt.Println(top)
-	fmt.Println(mid)
-	fmt.Println(low)
+	fmt.Println("╔" + border + "╗")
+	fmt.Println("║  " + title + "  ║")
+	fmt.Println("╚" + border + "╝")
 }
 
-func printActions(actions []string) {
-
-	for i := 0; i < len(actions); i++ {
-		if i == 0 {
-			actions[i] = "-> " + actions[i]
-			continue
-		}
-
-		actions[i] = "   " + actions[i]
-	}
-
-	result := strings.Join(actions, "\n")
-
-	fmt.Println("Выберите действие.")
-	fmt.Println(result)
-}
-
-func moveTo(row, col int) {
-	fmt.Printf("\033[%d;%dH", row, col)
-}
-
-func printMenu(actions []string, title string, cursor int) {
+func render(actions []string, title string, selected int) {
 	clearScreen()
 	printBox(title)
-	printActions(actions)
+	fmt.Println("Выберите действие.")
+
+	for i, a := range actions {
+		if i == selected {
+			fmt.Println("-> " + a)
+		} else {
+			fmt.Println("   " + a)
+		}
+	}
+}
+
+func printMenu(actions []string, title string) int {
+	selected := 0
 
 	for {
-		_, key, err := keyboard.GetKey()
+		render(actions, title, selected)
 
+		_, key, err := keyboard.GetKey()
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		if key == keyboard.KeyArrowDown {
-			cursor = moveArrowDown(cursor, len(actions)/2-1)
-			continue
-		}
-
-		if key == keyboard.KeyArrowUp {
-			cursor = moveArrowUp(cursor)
-			continue
-		}
-
-		if key == keyboard.KeyEnter {
-			clearScreen()
-			switch cursor - len(actions) {
-			case 0:
-				createCakeMenu()
-			case 1:
-				changeCakeMenu()
-			case 2:
-				deleteCakeMenu()
-			case 3:
-				createOrderMenu()
+		switch key {
+		case keyboard.KeyArrowDown:
+			if selected < len(actions)-1 {
+				selected++
 			}
-			return
-		}
-
-		if key == keyboard.KeyEsc {
-			break
+		case keyboard.KeyArrowUp:
+			if selected > 0 {
+				selected--
+			}
+		case keyboard.KeyEnter:
+			return selected
+		case keyboard.KeyEsc:
+			return -1
 		}
 	}
 }
 
 func MainMenu() {
-	title := "Главное меню"
-	var actions = []string{
+	actions := []string{
 		"1. Создать торт",
 		"2. Изменить торт",
 		"3. Удалить торт",
@@ -127,7 +72,22 @@ func MainMenu() {
 		"Нажмите Escape, чтобы выйти",
 	}
 
-	cursor := 5
+	for {
+		selected := printMenu(actions, "Главное меню")
 
-	printMenu(actions, title, cursor)
+		switch selected {
+		case 0:
+			createCakeMenu()
+		case 1:
+			changeCakeMenu()
+		case 2:
+			deleteCakeMenu()
+		case 3:
+			createOrderMenu()
+		case -1, 4:
+			clearScreen()
+			fmt.Println("До свидания!")
+			return
+		}
+	}
 }
