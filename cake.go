@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Form string
 
 const (
@@ -10,17 +12,17 @@ const (
 )
 
 type Compound struct {
-	Name  string
-	Price float32
+	Name  string  `json:"name"`
+	Price float32 `json:"price"`
 }
 
 type Cake struct {
-	Name       string
-	Size       Compound
-	Taste      Compound
-	Decor      []Compound
-	Form       Form
-	Amount     int
+	Name       string     `json:"name"`
+	Size       Compound   `json:"size"`
+	Taste      Compound   `json:"taste"`
+	Decor      []Compound `json:"decor"`
+	Form       Form       `json:"form"`
+	Amount     int        `json:"amount"`
 	totalPrice float32
 }
 
@@ -99,6 +101,27 @@ func (c *Cake) ChangeForm(form Form) {
 func (c *Cake) ChangeAmount(amount int) {
 	c.Amount = amount
 	c.calculateTotalPrice()
+}
+
+func (c *Cake) IsComplete() bool {
+	return c.Name != "" &&
+		c.Size.Name != "" &&
+		c.Taste.Name != "" &&
+		len(c.Decor) > 0 &&
+		c.Form != "" &&
+		c.Amount > 0
+}
+
+func (c *Cake) StringifiedCake() string {
+	return fmt.Sprintf(
+		"Название: %s\nРазмер: %s\nВкус: %s\nДекор: %s\nФорма: %s\nКоличество: %d",
+		c.Name,
+		c.Size.Name,
+		c.Taste.Name,
+		decorString(c.Decor),
+		string(c.Form),
+		c.Amount,
+	)
 }
 
 var AvailableSizes = []Compound{
